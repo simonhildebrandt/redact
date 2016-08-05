@@ -8,18 +8,20 @@
   },
   "dependencies": {
     "jquery": "2.1.4",
-    "react": "^0.14.1",
-    "react-dom": "^0.14.1"
+    "react": "> 0.14",
+    "react-dom": "> 0.14",
+    "material-ui": ">= 0.15"
   },
   "devDependencies": {
     "browserify": "~> 6.3",
     "browserify-incremental": "^1.4.0",
     "coffeeify": "^1.2.0",
     "jasmine-react-helpers": "~> 0.2",
-    "swagger-ui": "~> 2",
-    "materialize-css": "^0.97.3",
-    "react-materialize": ">=0.14.0"
+    "swagger-ui": "~> 2"
   },
   "author": "Simon Hildebrandt <simon.hildebrandt@fairfaxmedia.com.au>",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "update-assets": "cp node_modules/jquery/dist/jquery.min.js node_modules/materialize-css/bin/materialize.css node_modules/materialize-css/bin/materialize.js public"
+  }
 }
