@@ -1,0 +1,25 @@
+{
+  "name": "redact",
+  "version": "0.1.0",
+  "description": "Ultralight React-based admin CRUD for Rack applications.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "jquery": "2.1.4",
+    "react": "^0.14.1",
+    "react-dom": "^0.14.1"
+  },
+  "devDependencies": {
+    "browserify": "~> 6.3",
+    "browserify-incremental": "^1.4.0",
+    "coffeeify": "^1.2.0",
+    "jasmine-react-helpers": "~> 0.2",
+    "swagger-ui": "~> 2",
+    "materialize-css": "^0.97.3",
+    "react-materialize": ">=0.14.0"
+  },
+  "author": "Simon Hildebrandt <simon.hildebrandt@fairfaxmedia.com.au>",
+  "license": "MIT"
+}
