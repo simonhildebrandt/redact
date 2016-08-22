@@ -10,11 +10,20 @@ module Redact
       request = Rack::Request.new env
       #require 'byebug'; byebug
       return index_response if root_paths.include? request.path_info
+      return config_response if request.path_info == '/config.json'
       [404, {}, []]
     end
 
     def index_response
       [200, {'Content-Type' => 'text/html'}, [index_page]]
+    end
+
+    def config_response
+      [200, {'Content-Type' => 'application/json'}, [config_data]]
+    end
+
+    def config_data
+      JSON.dump(login_path: '/other/login', logout_path: '/other/logout', user_data: 'redact/user')
     end
 
     def index_page
@@ -31,9 +40,8 @@ module Redact
   end
 
   def self.app
-    path = admin_path
     Rack::Builder.new do
-      map '/admin' do
+      map Redact.admin_path do
         run Rack::Cascade.new [
           Redact::Index.new,
           Rack::File.new('public'),
