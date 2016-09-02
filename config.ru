@@ -9,11 +9,13 @@ require 'redact'
 
 class API < Grape::API
   prefix :data
-  
+  format :json
+
   resource :books do
     post :login do
-
-
+    end
+  end
+end
 
 use Rack::Cors do
   allow do
