@@ -23,8 +23,26 @@ module Redact
     end
 
     def config_data
-      JSON.dump(login_path: '/other/login', logout_path: '/other/logout', user_data: 'redact/user')
+      JSON.dump(path_data.merge(models: model_data))
     end
+
+    def path_data
+      {login_path: '/login', logout_path: '/logout', user_path: '/user'}
+    end
+
+    def model_data
+      [
+        { name: 'books', label: 'Books', fields: [
+          { name: 'id', type: 'string', primary: true },
+          { name: 'name', type: 'string' },
+          { name: 'author_id', type: 'association', associated: 'author' }
+        ]},
+        { name: 'authors', label: 'Authors', fields: [
+          { name: 'id', type: 'string', primary: true }, { name: 'name', type: 'string' }
+        ]}
+      ]
+    end
+
 
     def index_page
       File.read(index_path).gsub('TITLE', 'Redact').gsub('PATH', Redact.admin_path)
