@@ -1,17 +1,16 @@
 import $ from 'jquery'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import Navigation from './navigation'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import {teal700} from 'material-ui/styles/colors';
-import FloatingActionButton from 'material-ui/FloatingActionButton'
 import FontIcon from 'material-ui/FontIcon'
-import ContentAdd from 'material-ui/svg-icons/content/add'
 import IconMenu from 'material-ui/IconMenu'
-import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn, TableFooter} from 'material-ui/Table'
-import {BottomNavigation, BottomNavigationItem} from 'material-ui/BottomNavigation'
 import Paper from 'material-ui/Paper'
+
+import Navigation from './navigation'
+import DataTable from './data_table'
+
 import listenTo from 'element-resize-detector'
 
 import InjectTap from 'react-tap-event-plugin'
@@ -31,7 +30,8 @@ class App extends React.Component {
 
     this.state = {
       config: null,
-      userData: false
+      userData: false,
+      model: null //, model: 'books'
     }
 
     this.getConfig()
@@ -60,11 +60,30 @@ class App extends React.Component {
 
   configApp(data) {
     this.setState({config: data})
+    if (this.models().length > 0) {
+      this.setState({model: this.models()[0]})
+    }
     this.checkUser()
   }
 
   chooseModel(name) {
-    console.log('model chosen ' + name)
+    this.setState({model: this.findModel(name)})
+  }
+
+  models() {
+    return this.state.config.models || []
+  }
+
+  findModel(name) {
+    return this.models().find((m) => { return m.name == name })
+  }
+
+  title() {
+    if (this.state.model) {
+      return "Redact > " + this.state.model.label
+    } else {
+      return 'Redact'
+    }
   }
 
   render () {
@@ -74,71 +93,25 @@ class App extends React.Component {
 
     return <MuiThemeProvider muiTheme={muiTheme}>
       <div>
-        <Navigation configData={this.state.config} userData={this.state.userData} chooseModel={this.chooseModel} />
+        <Navigation
+          title={this.title()}
+          configData={this.state.config}
+          userData={this.state.userData}
+          chooseModel={(name) => this.chooseModel(name)}
+        />
         <div className="app-body">
-          {this.dataTable()}
-          <FloatingActionButton style={ {
-            margin: 0,
-            top: 'auto',
-            right: 20,
-            bottom: 20,
-            left: 'auto',
-            position: 'fixed',
-          } }><ContentAdd />
-          </FloatingActionButton>
+          {this.currentContent()}
         </div>
       </div>
     </MuiThemeProvider>
   }
 
-  getTableHeight() {
-    return '100%'
-  }
-
-  dataTable () {
-    return <Table height={this.getTableHeight()} multiSelectable={true} fixedHeader={true} fixedFooter={true}>
-    <TableHeader>
-      <TableRow>
-        <TableHeaderColumn>ID</TableHeaderColumn>
-        <TableHeaderColumn>Name</TableHeaderColumn>
-        <TableHeaderColumn>Status</TableHeaderColumn>
-      </TableRow>
-    </TableHeader>
-    <TableBody>
-      <TableRow>
-        <TableRowColumn>1</TableRowColumn>
-        <TableRowColumn>John Smith</TableRowColumn>
-        <TableRowColumn>Employed</TableRowColumn>
-      </TableRow>
-      <TableRow>
-        <TableRowColumn>2</TableRowColumn>
-        <TableRowColumn>Randal White</TableRowColumn>
-        <TableRowColumn>Unemployed</TableRowColumn>
-      </TableRow>
-      <TableRow>
-        <TableRowColumn>3</TableRowColumn>
-        <TableRowColumn>Stephanie Sanders</TableRowColumn>
-        <TableRowColumn>Employed</TableRowColumn>
-      </TableRow>
-      <TableRow>
-        <TableRowColumn>4</TableRowColumn>
-        <TableRowColumn>Steve Brown</TableRowColumn>
-        <TableRowColumn>Employed</TableRowColumn>
-      </TableRow>
-    </TableBody>
-    <TableFooter>
-      <TableRow>
-        <TableRowColumn>ID</TableRowColumn>
-        <TableRowColumn>Name</TableRowColumn>
-        <TableRowColumn>Status</TableRowColumn>
-      </TableRow>
-      <TableRow>
-        <TableRowColumn colSpan="3" style={{textAlign: 'center'}}>
-          Super Footer
-        </TableRowColumn>
-      </TableRow>
-    </TableFooter>
-  </Table>
+  currentContent() {
+    if (this.state.model) {
+      return <DataTable model={this.state.model} />
+    } else {
+      return <div>Select a model</div>
+    }
   }
 }
 

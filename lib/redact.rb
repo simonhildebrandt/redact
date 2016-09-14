@@ -32,13 +32,14 @@ module Redact
 
     def model_data
       [
-        { name: 'books', label: 'Books', fields: [
-          { name: 'id', type: 'string', primary: true },
-          { name: 'name', type: 'string' },
-          { name: 'author_id', type: 'association', associated: 'author' }
-        ]},
         { name: 'authors', label: 'Authors', fields: [
-          { name: 'id', type: 'string', primary: true }, { name: 'name', type: 'string' }
+          { name: 'id', label: 'ID', type: 'string', primary: true },
+          { name: 'name', label: 'Name', type: 'string' }
+        ]},
+        { name: 'books', label: 'Books', fields: [
+          { name: 'id', label: 'ID', type: 'string', primary: true },
+          { name: 'name', label: 'Name', type: 'string' },
+          { name: 'author_id', label: 'Author', type: 'association', associated: 'author' }
         ]}
       ]
     end
