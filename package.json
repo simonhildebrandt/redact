@@ -8,12 +8,13 @@
     "update-assets": "cp node_modules/jquery/dist/jquery.min.js node_modules/materialize-css/bin/materialize.css node_modules/materialize-css/bin/materialize.js public"
   },
   "dependencies": {
+    "element-resize-detector": "~> 1.1",
     "jquery": "2.1.4",
+    "material-ui": ">= 0.15",
+    "navigo": "^2.3.4",
     "react": "^15",
     "react-dom": "> 0.14",
-    "material-ui": ">= 0.15",
-    "react-tap-event-plugin": "^1.0.0",
-    "element-resize-detector": "~> 1.1"
+    "react-tap-event-plugin": "^1.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.11.4",

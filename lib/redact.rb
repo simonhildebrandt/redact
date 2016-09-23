@@ -1,17 +1,33 @@
 require "rack/builder"
 
-module Redact
+class Redact
   def self.admin_path
     '/admin'
   end
 
+  def initialize(app)
+    @stack = Rack::Builder.new(app) do
+      map Redact.admin_path do
+        use Redact::Index
+        use Rack::Static, :urls => ["/"], :root => "public"
+      end
+    end
+  end
+
+  def call(env)
+    @stack.call(env)
+  end
+
   class Index
+    def initialize(app)
+      @app = app
+    end
+
     def call env
       request = Rack::Request.new env
-      #require 'byebug'; byebug
       return index_response if root_paths.include? request.path_info
       return config_response if request.path_info == '/config.json'
-      [404, {}, []]
+      @app.call(env)
     end
 
     def index_response
@@ -19,11 +35,11 @@ module Redact
     end
 
     def config_response
-      [200, {'Content-Type' => 'application/json'}, [config_data]]
+      [200, {'Content-Type' => 'application/json'}, [JSON.dump(config_data)]]
     end
 
     def config_data
-      JSON.dump(path_data.merge(models: model_data))
+      path_data.merge(models: model_data)
     end
 
     def path_data
@@ -55,17 +71,6 @@ module Redact
 
     def root_paths
       ['', '/']
-    end
-  end
-
-  def self.app
-    Rack::Builder.new do
-      map Redact.admin_path do
-        run Rack::Cascade.new [
-          Redact::Index.new,
-          Rack::File.new('public'),
-        ]
-      end
     end
   end
 end

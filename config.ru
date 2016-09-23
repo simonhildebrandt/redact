@@ -73,6 +73,10 @@ module API
 end
 
 class DummyApp
+  def initialize(app)
+    @app = app
+  end
+
   def call env
     request = Rack::Request.new env
     if request.path_info == '/login'
@@ -92,7 +96,7 @@ class DummyApp
         return [403, {}, []]
       end
     end
-    [404, {}, []]
+    @app.call(env)
   end
 
   def html_for
@@ -121,8 +125,10 @@ end
 use Rack::Cors do
   allow do
     origins '*'
-    resource '*', :headers => :any, :methods => [:put, :get, :post, :delete, :options]
+    resource '*', headers: :any, methods: [:put, :get, :post, :delete, :options]
   end
 end
-use Rack::Session::Cookie
-run Rack::Cascade.new [API::Root.new, DummyApp.new, Redact.app]
+use Rack::Session::Cookie, secret: 'change_me'
+use DummyApp
+use Redact
+run API::Root

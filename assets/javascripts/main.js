@@ -11,6 +11,8 @@ import Paper from 'material-ui/Paper'
 import Navigation from './navigation'
 import DataTable from './data_table'
 
+import Navigo from 'navigo'
+
 import listenTo from 'element-resize-detector'
 
 import InjectTap from 'react-tap-event-plugin'
@@ -28,26 +30,30 @@ class App extends React.Component {
   constructor(props) {
     super(props)
 
+    this.config = null
+    this.userData = null
+
     this.state = {
-      config: null,
-      userData: false,
-      model: null //, model: 'books'
+      configured: false,
+      model: null
     }
+
+    this.router = new Navigo(null, true)
 
     this.getConfig()
   }
 
   loggedIn() {
-    return this.state.userData;
+    return this.userData
   }
 
   checkUser() {
-    $.get(this.state.config.user_path)
+    $.get(this.config.user_path)
     .done((data) => {
       this.setState({userData: data})
     })
     .fail(() => {
-      // Show link to login
+      // redirect to login
     })
   }
 
@@ -59,10 +65,12 @@ class App extends React.Component {
   }
 
   configApp(data) {
-    this.setState({config: data})
+    this.config = data
     if (this.models().length > 0) {
       this.setState({model: this.models()[0]})
+      this.router.resolve()
     }
+    this.setState({configured: true})
     this.checkUser()
   }
 
@@ -71,7 +79,7 @@ class App extends React.Component {
   }
 
   models() {
-    return this.state.config.models || []
+    return this.config.models || []
   }
 
   findModel(name) {
@@ -87,15 +95,17 @@ class App extends React.Component {
   }
 
   render () {
-    if (!this.loggedIn()) {
-      return <a href="/login?redirect_to=/admin">Login</a>
+    if(!this.state.configured) {
+      return <div>Loading configuration</div>
     }
-
+    if(!this.state.userData) {
+      return <div>Loading user data</div>
+    }
     return <MuiThemeProvider muiTheme={muiTheme}>
       <div>
         <Navigation
           title={this.title()}
-          configData={this.state.config}
+          configData={this.config}
           userData={this.state.userData}
           chooseModel={(name) => this.chooseModel(name)}
         />

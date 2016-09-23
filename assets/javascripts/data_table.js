@@ -78,7 +78,7 @@ class DataTable extends React.Component {
   }
 
   header(field) {
-    return <TableHeaderColumn key={field.id}>{field.label}</TableHeaderColumn>
+    return <TableHeaderColumn key={field.name}>{field.label}</TableHeaderColumn>
   }
 
   rows() {
@@ -89,13 +89,13 @@ class DataTable extends React.Component {
   }
 
   row(record) {
-    return <TableRow>
+    return <TableRow key={record.id}>
       { this.fields().map((field) => { return this.column(field, record) } ) }
     </TableRow>
   }
 
   column(field, record) {
-    return <TableRowColumn>{record[field.name]}</TableRowColumn>
+    return <TableRowColumn key={field.name}>{record[field.name]}</TableRowColumn>
   }
 
   render () {
