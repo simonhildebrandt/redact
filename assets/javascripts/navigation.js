@@ -118,4 +118,4 @@ class Navigation extends React.Component {
   }
 }
 
-module.exports = Navigation
+export default Navigation

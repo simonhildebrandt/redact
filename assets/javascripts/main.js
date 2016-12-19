@@ -10,7 +10,7 @@ import Paper from 'material-ui/Paper'
 
 import Navigation from './navigation'
 import DataTable from './data_table'
-
+import Models from './models'
 import Navigo from 'navigo'
 
 import listenTo from 'element-resize-detector'
@@ -43,6 +43,12 @@ class App extends React.Component {
     this.getConfig()
   }
 
+  getChildContext() {
+    return {
+      config: this.state.config
+    }
+  }
+
   loggedIn() {
     return this.userData
   }
@@ -51,6 +57,7 @@ class App extends React.Component {
     $.get(this.config.user_path)
     .done((data) => {
       this.setState({userData: data})
+      this.setState({configured: true})
     })
     .fail(() => {
       // redirect to login
@@ -66,24 +73,17 @@ class App extends React.Component {
 
   configApp(data) {
     this.config = data
-    if (this.models().length > 0) {
-      this.setState({model: this.models()[0]})
-      this.router.resolve()
-    }
-    this.setState({configured: true})
+    this.models = new Models(this.config.models)
+    this.router.resolve()
     this.checkUser()
   }
 
   chooseModel(name) {
-    this.setState({model: this.findModel(name)})
+    this.router.navigate(this.findModel(name).root)
   }
 
   models() {
     return this.config.models || []
-  }
-
-  findModel(name) {
-    return this.models().find((m) => { return m.name == name })
   }
 
   title() {
@@ -107,7 +107,7 @@ class App extends React.Component {
           title={this.title()}
           configData={this.config}
           userData={this.state.userData}
-          chooseModel={(name) => this.chooseModel(name)}
+          chooseModel={name => this.chooseModel(name)}
         />
         <div className="app-body">
           {this.currentContent()}
@@ -124,6 +124,12 @@ class App extends React.Component {
     }
   }
 }
+
+App.childContextTypes = {
+  config: React.PropTypes.object,
+}
+
+
 
 $(() => {
   let target = $('#container')
